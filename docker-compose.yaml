@@ -11,14 +11,25 @@ services:
     - target: 5000
       published: 5000
       protocol: tcp
+
+  frontend:
+    container_name: frontend
+    image: roblewisqa/frontend:latest
+    build: ./app/frontend
+    deploy:
+      replicas: 1
+    ports:
+    - target: 5001
+      published: 5001
+      protocol: tcp
   
-  # nginx:
-  #   image: nginx:latest
-  #   ports:
-  #   - target: 80
-  #     published: 80
-  #     protocol: tcp
-  #   volumes:
-  #   - type: bind
-  #     source: ./app/nginx/nginx.conf
-  #     target: /etc/nginx/nginx.conf
+  nginx:
+    image: nginx:latest
+    ports:
+    - target: 80
+      published: 80
+      protocol: tcp
+    volumes:
+    - type: bind
+      source: ./app/nginx/nginx.conf
+      target: /etc/nginx/nginx.conf

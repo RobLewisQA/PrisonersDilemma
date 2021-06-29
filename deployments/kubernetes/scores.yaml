@@ -1,0 +1,39 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: scores
+#   labels:
+#     app: scores
+
+# spec:
+#   selector:
+#     matchLabels:
+#       app: scores
+#   replicas: 1
+
+#   template:
+#     metadata:
+#       name: scores
+#       labels:
+#         app: scores
+#     spec:
+#       containers:
+#       - name: scores
+#         image: roblewisqa/scores:latest
+#         imagePullPolicy: Always
+#         ports:
+#         - containerPort: 5002
+        
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: scores
+# spec:
+#   selector:
+#     app: scores
+#   ports:
+#   - port: 5002
+#     targetPort: 5002
+#     protocol: TCP
+#   type: ClusterIP

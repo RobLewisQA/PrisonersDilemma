@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tournament
+  labels:
+    app: tournament
+
+spec:
+  selector:
+    matchLabels:
+      app: tournament
+  replicas: 1
+
+  template:
+    metadata:
+      name: tournament
+      labels:
+        app: tournament
+    spec:
+      containers:
+      - name: tournament
+        image: roblewisqa/tournament:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tournament
+spec:
+  selector:
+    app: tournament
+  ports:
+  - port: 5000
+    targetPort: 5000
+    protocol: TCP
+  type: ClusterIP

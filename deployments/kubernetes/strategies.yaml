@@ -1,0 +1,39 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: strategies
+#   labels:
+#     app: strategies
+
+# spec:
+#   selector:
+#     matchLabels:
+#       app: strategies
+#   replicas: 1
+
+#   template:
+#     metadata:
+#       name: strategies
+#       labels:
+#         app: strategies
+#     spec:
+#       containers:
+#       - name: strategies
+#         image: roblewisqa/strategies:latest
+#         imagePullPolicy: Always
+#         ports:
+#         - containerPort: 5001
+        
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: strategies
+# spec:
+#   selector:
+#     app: strategies
+#   ports:
+#   - port: 5001
+#     targetPort: 5001
+#     protocol: TCP
+#   type: ClusterIP

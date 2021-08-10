@@ -5,7 +5,7 @@ import requests
 
 @app.route('/', methods=['GET','POST']) 
 def home_fe():
-    return "wanna play?" + '<br><br><a href="/play">Start a tournament?</a> </br>'
+    return render_template("homepage.html")#"wanna play?" + '<br><br><a href="/1">Start a tournament?</a> </br>'
 
 @app.route('/1', methods=['GET','POST']) 
 def singlegame_fe():

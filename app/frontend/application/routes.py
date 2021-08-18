@@ -11,7 +11,9 @@ def home():
 def tutorial_1():
     return render_template("tutorial_1.html")
 
-
+@app.route('/tutorial2', methods=['GET','POST']) 
+def tutorial_2():
+    return render_template("tutorial_2.html")
 # def singlegame_fe():
 #     return 'singlegame_fe'
 

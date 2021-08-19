@@ -1,0 +1,28 @@
+<html>
+    <h1>Choose a strategy</h1>
+    <br>
+    <style>
+        div.a {
+          text-align: center;
+        }
+    </style>
+    <body>
+        <div class="a">
+            <table border="1">  
+                <tr><th>Strategy</th><th>Explanation</th></tr>  
+                <tr><td>AlwaysCooperate</td><td>This strategy always cooperates</td></tr>  
+                <tr><td>AlwaysDefect</td><td>This strategy always defects</td></tr>  
+                <tr><td>TitForTat</td><td>This strategy begins by cooperating and then does what the opponent did on their previous turn</td></tr>  
+                <tr><td>CooperateUntilDefection</td><td>This strategy cooperates until the other player defects, after which it always defects</td></tr>  
+                <tr><td>Random</td><td>This strategy chooses to cooperate or defect randomly</td></tr>  
+                </table> 
+
+                <!-- <form action="/orders/add/order" method = "post">
+                    <label for="name2">Purchase Date:</label>
+                    <br>
+                    <input type="text" id="date" name="date" value = {{ value }}><br><br>
+                    <input type="submit" value="Submit">
+                </form> -->
+        </div>
+    </body>
+</html>

@@ -1,0 +1,73 @@
+<html>
+    <h1>
+        Create your game
+    </h1>
+
+
+    <form action="/freegame2" method = "post">
+        <h2>
+            Points
+        </h2>
+        <h4>
+            Choose how the outcomes are scored
+        </h4>
+
+        <label for="name2">If both players cooperate, both will score:</label>
+        <input type="text" id="date" name="cc"> <br><br>
+        <label for="name2">If both players defect, both will score:</label>
+        <input type="text" id="date" name="dd"><br><br>
+        <label for="name2">If one player defects while the other cooperates, the defector will score:</label>
+        <input type="text" id="date" name="dccd">
+        <label for="name2"> and the cooperator will score:</label>
+        <input type="text" id="date" name="cddc"><br><br>
+        
+        <h2>
+            Rounds
+        </h2>
+        <label for="name2">How many rounds will there be in each matchup?</label><br>
+        <input type="text" id="date" name="num"> <br><br>
+
+        <h2>
+            Matches
+        </h2>
+        <label for="name2">How many matches will each matchup play in the tournament?</label><br>
+        <input type="text" id="date" name="mat"> <br><br>
+
+        <h2>
+            Misfire
+        </h2>
+        <p>
+            <label for="name2">A player will mistakenly/accidentally choose the wrong move</label><br>
+            <input type="text" id="date" name="num">
+            % of the time
+        </p>
+
+        <h2>
+            Strategies
+        </h2>
+        <h4>
+            Choose some strategies to compete in your tournament
+        </h4>
+
+        <input type="checkbox" id="strategy1" name="strategy1" value="C_AlwaysC">
+        <label for="strategy1"> C_AlwaysC</label><br>
+        <input type="checkbox" id="strategy2" name="strategy2" value="D_AlwaysD">
+        <label for="strategy2"> D_AlwaysD</label><br>
+        <input type="checkbox" id="strategy3" name="strategy3" value="C_TitforTat">
+        <label for="strategy3"> C_TitforTat</label><br>
+        <input type="checkbox" id="strategy4" name="strategy4" value="D_TitforTat">
+        <label for="strategy4"> D_TitforTat</label><br>
+        <input type="checkbox" id="strategy5" name="strategy5" value="C_UntilD">
+        <label for="strategy5"> C_UntilD</label><br>
+        <input type="checkbox" id="strategy6" name="strategy6" value="Random">
+        <label for="strategy6"> Random</label><br>
+        <input type="checkbox" id="strategy7" name="strategy7" value="C_Titfor2Tat">
+        <label for="strategy7"> C_Titfor2Tat</label><br>
+        <input type="checkbox" id="strategy8" name="strategy8" value="Random_70C">
+        <label for="strategy8"> I have a bike</label><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+
+</html>

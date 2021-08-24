@@ -7,6 +7,8 @@ import requests
 def home():
     return render_template("homepage.html")#"wanna play?" + '<br><br><a href="/1">Start a tournament?</a> </br>'
 
+## Tutorial section ##
+
 @app.route('/tutorial1', methods=['GET','POST']) 
 def tutorial_1():
     return render_template("tutorial_1.html")
@@ -18,6 +20,22 @@ def tutorial_2():
 @app.route('/tutorial3', methods=['GET','POST']) 
 def tutorial_3():
     return render_template("tutorial_3.html")
+
+## Tutorial end ##
+
+@app.route('/freegame1', methods=['GET','POST']) 
+def freegame_1():
+    return render_template("freegame_1.html")
+
+@app.route('/freegame2', methods=['GET','POST']) 
+def freegame_2():
+    return render_template("freegame_2.html")
+    
+@app.route('/freegame3', methods=['GET','POST']) 
+def freegame_3():
+    return render_template("freegame_3.html")
+
+
 # def singlegame_fe():
 #     return 'singlegame_fe'
 

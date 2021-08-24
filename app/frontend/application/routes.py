@@ -29,7 +29,29 @@ def freegame_1():
 
 @app.route('/freegame2', methods=['GET','POST']) 
 def freegame_2():
-    return render_template("freegame_2.html")
+    if request.method == 'POST':
+        cc_points = request.form['cc_points']
+        dd_points = request.form['dd_points']
+        dc_points = request.form['dc_points']
+        cd_points = request.form['cd_points']
+
+        rounds_no = request.form['rounds']
+        matches_no = request.form['matches']
+        noise = request.form['noise']
+
+        playing_strategies = []
+        for n in range(1,9):
+            strategy_no = 'strategy'+str(n)
+            try:
+                playing_strategies.append(request.form[strategy_no])
+            except:
+                ""
+        
+        return render_template("freegame_2.html", cc_points = cc_points, dd_points = dd_points, cd_points = cd_points, dc_points = dc_points,
+        rounds_no = rounds_no, matches_no = matches_no, noise = noise, playing_strategies = playing_strategies)#'<p> '+ cc_points + '<br>' + dd_points + '<br>' + cd_points + '<br>' + dc_points + '<br>' + str(playing_strategies) +' </p>'
+    
+    if response.method == 'GET':
+        return 'Hmm, this is not a gettable page. Try again'##render_template("freegame_2.html")
     
 @app.route('/freegame3', methods=['GET','POST']) 
 def freegame_3():

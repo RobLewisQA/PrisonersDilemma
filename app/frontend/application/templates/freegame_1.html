@@ -12,33 +12,33 @@
             Choose how the outcomes are scored
         </h4>
 
-        <label for="name2">If both players cooperate, both will score:</label>
-        <input type="text" id="date" name="cc"> <br><br>
-        <label for="name2">If both players defect, both will score:</label>
-        <input type="text" id="date" name="dd"><br><br>
-        <label for="name2">If one player defects while the other cooperates, the defector will score:</label>
-        <input type="text" id="date" name="dccd">
-        <label for="name2"> and the cooperator will score:</label>
-        <input type="text" id="date" name="cddc"><br><br>
+        <label for="cc_points">If both players cooperate, both will score:</label>
+        <input type="text" id="cc_points" name="cc_points"> <br><br>
+        <label for="dd_points">If both players defect, both will score:</label>
+        <input type="text" id="dd_points" name="dd_points"><br><br>
+        <label for="dc_points">If one player defects while the other cooperates, the defector will score:</label>
+        <input type="text" id="dc_points" name="dc_points">
+        <label for="cd_points"> and the cooperator will score:</label>
+        <input type="text" id="cd_points" name="cd_points"><br><br>
         
         <h2>
             Rounds
         </h2>
-        <label for="name2">How many rounds will there be in each matchup?</label><br>
-        <input type="text" id="date" name="num"> <br><br>
+        <label for="rounds">How many rounds will there be in each matchup?</label><br>
+        <input type="text" id="rounds" name="rounds"> <br><br>
 
         <h2>
             Matches
         </h2>
-        <label for="name2">How many matches will each matchup play in the tournament?</label><br>
-        <input type="text" id="date" name="mat"> <br><br>
+        <label for="matches">How many matches will each matchup play in the tournament?</label><br>
+        <input type="text" id="matches" name="matches"> <br><br>
 
         <h2>
             Misfire
         </h2>
         <p>
-            <label for="name2">A player will mistakenly/accidentally choose the wrong move</label><br>
-            <input type="text" id="date" name="num">
+            <label for="noise">A player will mistakenly/accidentally choose the wrong move</label><br>
+            <input type="text" id="noise" name="noise">
             % of the time
         </p>
 
@@ -64,7 +64,7 @@
         <input type="checkbox" id="strategy7" name="strategy7" value="C_Titfor2Tat">
         <label for="strategy7"> C_Titfor2Tat</label><br>
         <input type="checkbox" id="strategy8" name="strategy8" value="Random_70C">
-        <label for="strategy8"> I have a bike</label><br>
+        <label for="strategy8"> Random_70C</label><br>
 
         <input type="submit" value="Submit">
     </form>

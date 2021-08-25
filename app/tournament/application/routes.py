@@ -164,8 +164,8 @@ def fixtures(winner,loser,g,df1):
     fixture_list = list(combinations(players(winner,loser,g,df1).index,2))
     return fixture_list
     
-def game(winner,loser,g,df1):
-    gamelength = 10
+def game(winner,loser,g,df1,rounds_no):
+    gamelength = rounds_no
     fixture_list = list(fixtures(winner,loser,g,df1))
     player_strategies = players(winner,loser,g,df1).strategy_history
     round_totals = pd.DataFrame()
@@ -192,29 +192,29 @@ def game(winner,loser,g,df1):
         round_totals = pd.concat([round_totals,df.iloc[:,-2:].sum(axis=0)],axis=1)
     return round_totals.sum(axis=1)
 
-def match(g,winner,loser,df1):
-    rounds = 5
+def match(g,winner,loser,df1,rounds_no,matchups_no):
+    matchups = matchups_no
     df = pd.DataFrame()
-    for r in range(rounds):
-        df = pd.concat([df,game(winner,loser,g,df1)],axis=1)
+    for r in range(matchups-1):
+        df = pd.concat([df,game(winner,loser,g,df1,rounds_no)],axis=1)
     totals = pd.Series(df.sum(axis=1),name='Generation'+'_'+str(g))
     return pd.merge(players(winner,loser,g,df1),totals,how='outer',left_index=True,right_index=True)
 
-def tournament():
-    generations = 50
+def tournament(generations_no):
+    generations = generations_no
     df = pd.DataFrame()
     winner = 'player1'
     loser = 'player1'
     df1 = df.copy()
     for g in range(generations):
         if g == 0:
-            df = pd.concat([df,match(g,winner,loser,df1)],axis=1)
+            df = pd.concat([df,match(g,winner,loser,df1,rounds_no,matchups_no)],axis=1)
             scores = df.iloc[:,-1]
             winner = choices(list(scores.loc[scores == scores.max()].index))[0]
             loser = choices(list(scores.loc[scores == scores.min()].index))[0]
         else:
             df1 = df.iloc[:,-2].copy()
-            df = pd.concat([df,match(g,winner,loser,df1)],axis=1)
+            df = pd.concat([df,match(g,winner,loser,df1,rounds_no,matchups_no)],axis=1)
             scores = df.iloc[:,-1]
             winner = choices(list(scores.loc[scores == scores.max()].index))[0]
             loser = choices(list(scores.loc[scores == scores.min()].index))[0]
@@ -231,6 +231,20 @@ def home():
 
 @app.route('/play', methods=['GET','POST'])  # to move into strategies microservice
 def play():
+    # rounds = rounds
+    # matchups = matches 
+    #response = requests.get('http://frontend:5001/freegame3').json
+    #data = json.loads(response)
+    #rounds = data['rounds']
+    #matchups = data['matches']
+    
+    # try:
+    #     generations = data['generations_no']
+    # except:
+    #     generations == 0
+
+
+
     strategy_list = []
     for s in strategies_menu():
         strategy_list.append(s.__name__)
@@ -239,9 +253,10 @@ def play():
     for m in range(len(strategy_list)):
         maps.update({m:strategy_list[m]})
 
-    df6 = match(0,'player1','player1',pd.DataFrame())
+    df6 = match(0,'player1','player1',pd.DataFrame(),rounds,matchups)
     df6_clean = pd.concat([df6.strategy_history.map(maps),df6.Generation_0],axis=1).sort_values(by='Generation_0',ascending=False)
-    return df6_clean.to_html()
+    #requests.post('http://5001:')
+    return df6_clean.to_json()
 
 
 #@app.route('/game', methods=['GET','POST'])  # a game is a single interaction between two players

@@ -2,6 +2,7 @@ from application import app
 from flask import Flask, redirect, request, url_for,render_template, Response, jsonify
 import pandas as pd
 import requests
+import json
 
 @app.route('/', methods=['GET','POST']) 
 def home():
@@ -47,15 +48,47 @@ def freegame_2():
             except:
                 ""
         
+        # data = {"cc_points":cc_points, "dd_points":dd_points,"cd_points":cd_points,"dc_points":dc_points,
+        # "rounds":rounds_no,"matches":matches_no}
+        # requests.post('http://frontend:5001/freegame3', json = data)
+
         return render_template("freegame_2.html", cc_points = cc_points, dd_points = dd_points, cd_points = cd_points, dc_points = dc_points,
         rounds_no = rounds_no, matches_no = matches_no, noise = noise, playing_strategies = playing_strategies)#'<p> '+ cc_points + '<br>' + dd_points + '<br>' + cd_points + '<br>' + dc_points + '<br>' + str(playing_strategies) +' </p>'
     
+
     if response.method == 'GET':
         return 'Hmm, this is not a gettable page. Try again'##render_template("freegame_2.html")
     
+@app.route('/dataholding', methods=['GET','POST']) 
+def dataholding():
+    if request.method == 'POST':
+        data = {"cc_points":request.form['cc_points'], "dd_points":request.form['dd_points'],"cd_points":request.form['cd_points'],
+        "dc_points":request.form['dc_points'], "rounds":request.form['rounds_no'],"matches":request.form['matches_no']}
+        return json.dumps(data)
+
 @app.route('/freegame3', methods=['GET','POST']) 
 def freegame_3():
-    return render_template("freegame_3.html")
+    if request.method == 'POST':
+        data = {"cc_points":request.form['cc_points'], "dd_points":request.form['dd_points'],"cd_points":request.form['cd_points'],
+        "dc_points":request.form['dc_points'], "rounds":request.form['rounds_no'],"matches":request.form['matches_no']}
+
+        # response = requests.get('http://tournament:5000/play',params = {"rounds":request.form['rounds_no'],"matches":request.form['matches_no']})
+        return str(response.json)
+    
+    #else:
+
+
+
+        # #data = request.form['cc_points']
+
+        # data = {"cc_points":request.form['cc_points'], "dd_points":request.form['dd_points'],"cd_points":request.form['cd_points'],
+        # "dc_points":request.form['dc_points'], "rounds":request.form['rounds_no'],"matches":request.form['matches_no']}
+        # requests.post('http://tournament:5000/play', json = data)
+
+        # return str(data)#render_template("freegame_3.html")
+    
+
+
 
 
 # def singlegame_fe():

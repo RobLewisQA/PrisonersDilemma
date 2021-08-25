@@ -1,15 +1,43 @@
 <html>
+    <h2>
+        Are you ready!!
+    </h2>
     <body>
+        <h3> 
+            Scoring
+        </h3>
         Points for both cooperating: {{ cc_points }} <br>
         Points for both defecting: {{ dd_points }} <br>
         Points for defecting while the other cooperates: {{ dc_points }} <br>
-        Points for cooperating while the other defects: {{ cd_points }} <br>
+        Points for cooperating while the other defects: {{ cd_points }} <br><br>
+        <h3>
+            Tournament setup
+        </h3> 
         Number of rounds in a match: {{ rounds_no }} <br>
         Number of matches per matchup in tournament: {{ matches_no }} <br>
         Probability of misfiring: {{ noise }} <br> <br>
-        <h2>
+        
+        <h3>
             Strategies to play
-        </h2>
+        </h3>
         {{ playing_strategies }}
+        <br><br>
+
+        <form method="post" action="/freegame3" class="inline">
+            <input type="hidden" name="cc_points" value={{ cc_points }}>
+            <input type="hidden" name="dd_points" value={{ dd_points }}>
+            <input type="hidden" name="cd_points" value={{ cd_points }}>
+            <input type="hidden" name="dc_points" value={{ dc_points }}>
+            <input type="hidden" name="rounds_no" value={{ rounds_no }}>
+            <input type="hidden" name="matches_no" value={{ matches_no }}>
+            <input type="hidden" name="matches_no" value={{ playing_strategies }}>
+            <button type="submit" name="submit_param" value="submit_value" class="link-button">
+              Play
+            </button>
+        </form>
+        <br><br>
+        <a href="/freegame1">Back</a>
+        
+
     </body>
 </html>

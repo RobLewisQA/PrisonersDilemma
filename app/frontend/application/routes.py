@@ -64,16 +64,31 @@ def dataholding():
     if request.method == 'POST':
         data = {"cc_points":request.form['cc_points'], "dd_points":request.form['dd_points'],"cd_points":request.form['cd_points'],
         "dc_points":request.form['dc_points'], "rounds":request.form['rounds_no'],"matches":request.form['matches_no']}
-        return json.dumps(data)
+        json_data = json.dumps(data)
+        f = open("game_rules.json", "w")
+        f.write(json_data)
+        f.close()
+        return redirect('freegame3')
+    if request.method == 'GET':
+        f = open('game_rules.json',)
+        data = json.load(f)
+        f.close()
+        return data
 
+        
 @app.route('/freegame3', methods=['GET','POST']) 
 def freegame_3():
-    if request.method == 'POST':
-        data = {"cc_points":request.form['cc_points'], "dd_points":request.form['dd_points'],"cd_points":request.form['cd_points'],
-        "dc_points":request.form['dc_points'], "rounds":request.form['rounds_no'],"matches":request.form['matches_no']}
+    if request.method == 'GET':
+        content = requests.get('http://tournament:5000/play').json()
+        return pd.DataFrame.from_dict(content,orient='index').to_html()
 
-        # response = requests.get('http://tournament:5000/play',params = {"rounds":request.form['rounds_no'],"matches":request.form['matches_no']})
-        return str(response.json)
+
+    # if request.method == 'POST':
+    #     data = {"cc_points":request.form['cc_points'], "dd_points":request.form['dd_points'],"cd_points":request.form['cd_points'],
+    #     "dc_points":request.form['dc_points'], "rounds":request.form['rounds_no'],"matches":request.form['matches_no']}
+
+    #     # response = requests.get('http://tournament:5000/play',params = {"rounds":request.form['rounds_no'],"matches":request.form['matches_no']})
+    #     return str(response.json)
     
     #else:
 

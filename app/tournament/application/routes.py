@@ -4,6 +4,7 @@ import pandas as pd
 from itertools import combinations
 from random import choices
 import random
+import requests
 
 def calculator(player1_move,player2_move,move_hist):
     if player1_move == "c":
@@ -231,19 +232,10 @@ def home():
 
 @app.route('/play', methods=['GET','POST'])  # to move into strategies microservice
 def play():
-    # rounds = rounds
-    # matchups = matches 
-    #response = requests.get('http://frontend:5001/freegame3').json
-    #data = json.loads(response)
-    #rounds = data['rounds']
-    #matchups = data['matches']
-    
-    # try:
-    #     generations = data['generations_no']
-    # except:
-    #     generations == 0
-
-
+    content = requests.get('http://frontend:5001/dataholding')
+    data = content.json()
+    rounds = int(data["rounds"])
+    matchups = int(data["matches"])
 
     strategy_list = []
     for s in strategies_menu():
@@ -255,7 +247,6 @@ def play():
 
     df6 = match(0,'player1','player1',pd.DataFrame(),rounds,matchups)
     df6_clean = pd.concat([df6.strategy_history.map(maps),df6.Generation_0],axis=1).sort_values(by='Generation_0',ascending=False)
-    #requests.post('http://5001:')
     return df6_clean.to_json()
 
 

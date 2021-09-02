@@ -40,21 +40,21 @@ def freegame_2():
         matches_no = request.form['matches']
         noise = request.form['noise']
 
-        playing_strategies = []
-        for n in range(1,9):
+        selected_strategies = []
+        for n in range(1,11):
             strategy_no = 'strategy'+str(n)
             try:
-                playing_strategies.append(request.form[strategy_no])
+                selected_strategies.append(request.form[strategy_no])
             except:
                 ""
-        
+        playing_strategies = str(selected_strategies).replace(", ","-")
+
         # data = {"cc_points":cc_points, "dd_points":dd_points,"cd_points":cd_points,"dc_points":dc_points,
         # "rounds":rounds_no,"matches":matches_no}
         # requests.post('http://frontend:5001/freegame3', json = data)
 
         return render_template("freegame_2.html", cc_points = cc_points, dd_points = dd_points, cd_points = cd_points, dc_points = dc_points,
-        rounds_no = rounds_no, matches_no = matches_no, noise = noise, playing_strategies = playing_strategies)#'<p> '+ cc_points + '<br>' + dd_points + '<br>' + cd_points + '<br>' + dc_points + '<br>' + str(playing_strategies) +' </p>'
-    
+        rounds_no = rounds_no, matches_no = matches_no, noise = noise, playing_strategies = playing_strategies)    
 
     if response.method == 'GET':
         return 'Hmm, this is not a gettable page. Try again'##render_template("freegame_2.html")
@@ -62,8 +62,10 @@ def freegame_2():
 @app.route('/dataholding', methods=['GET','POST']) 
 def dataholding():
     if request.method == 'POST':
+        strategies_request_string = request.form['playing_strategies']
+        strategies_list = strategies_request_string.replace("[","").replace("]","").replace(" ","").replace("'","").split('-')
         data = {"cc_points":request.form['cc_points'], "dd_points":request.form['dd_points'],"cd_points":request.form['cd_points'],
-        "dc_points":request.form['dc_points'], "rounds":request.form['rounds_no'],"matches":request.form['matches_no']}
+        "dc_points":request.form['dc_points'], "rounds":request.form['rounds_no'],"matches":request.form['matches_no'],"strategies":strategies_list}
         json_data = json.dumps(data)
         f = open("game_rules.json", "w")
         f.write(json_data)
@@ -80,28 +82,7 @@ def dataholding():
 def freegame_3():
     if request.method == 'GET':
         content = requests.get('http://tournament:5000/play').json()
-        return pd.DataFrame.from_dict(content,orient='index').to_html()
-
-
-    # if request.method == 'POST':
-    #     data = {"cc_points":request.form['cc_points'], "dd_points":request.form['dd_points'],"cd_points":request.form['cd_points'],
-    #     "dc_points":request.form['dc_points'], "rounds":request.form['rounds_no'],"matches":request.form['matches_no']}
-
-    #     # response = requests.get('http://tournament:5000/play',params = {"rounds":request.form['rounds_no'],"matches":request.form['matches_no']})
-    #     return str(response.json)
-    
-    #else:
-
-
-
-        # #data = request.form['cc_points']
-
-        # data = {"cc_points":request.form['cc_points'], "dd_points":request.form['dd_points'],"cd_points":request.form['cd_points'],
-        # "dc_points":request.form['dc_points'], "rounds":request.form['rounds_no'],"matches":request.form['matches_no']}
-        # requests.post('http://tournament:5000/play', json = data)
-
-        # return str(data)#render_template("freegame_3.html")
-    
+        return pd.DataFrame.from_dict(content,orient='index').to_html()    
 
 
 

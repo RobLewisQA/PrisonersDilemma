@@ -142,11 +142,27 @@ def D_AlwaysCExploiter(turn,player,move_hist):
             
             
 def strategies_menu():
+    menu = (C_AlwaysD,C_AlwaysC,D_AlwaysD,C_TitForTat,C_UntilD,Random_70C,Random_70D,C_TitFor2Tat,D_TitFor2TatExploiter,C_OccasionalDefector,D_AlwaysCExploiter,D_AlwaysC)
     return C_AlwaysD,C_AlwaysC,D_AlwaysD,C_TitForTat,C_UntilD,Random_70C,Random_70D,C_TitFor2Tat,D_TitFor2TatExploiter,C_OccasionalDefector,D_AlwaysCExploiter,D_AlwaysC
 
-def players(winner,loser,g,df1):
-    if g == 0:
-        playing = 12
+############ strategies selector based on route post
+def strategies_selection(selected_strategies_list):
+    all_strategies_set = (C_AlwaysD,C_AlwaysC,D_AlwaysD,C_TitForTat,C_UntilD,Random_70C,Random_70D,C_TitFor2Tat,D_TitFor2TatExploiter,C_OccasionalDefector,D_AlwaysCExploiter,D_AlwaysC)
+    all_strategies_list = []
+    for a in all_strategies_set:
+        all_strategies_list.append(a.__name__)
+
+    strategies_playing = []
+    for strategy in selected_strategies_list:
+        strategies_playing = strategies_playing + [all_strategies_list.index(strategy)]
+    return tuple([all_strategies_set[index] for index in strategies_playing])
+
+############
+
+def players(winner,loser,tournament_stage,df1,strategies_playing):
+    if tournament_stage == 0:
+        #playing = 12
+        playing = len(strategies_playing)
         player_list = []
         start_strategy = []
         for p in range(1,playing+1):
@@ -161,17 +177,17 @@ def players(winner,loser,g,df1):
     return df
 
 
-def fixtures(winner,loser,g,df1):
-    fixture_list = list(combinations(players(winner,loser,g,df1).index,2))
+def fixtures(winner,loser,tournament_stage,df1,strategies_playing):
+    fixture_list = list(combinations(players(winner,loser,tournament_stage,df1,strategies_playing).index,2))
     return fixture_list
     
-def game(winner,loser,g,df1,rounds_no):
+def game(winner,loser,tournament_stage,df1,rounds_no,strategies_playing):
     gamelength = rounds_no
-    fixture_list = list(fixtures(winner,loser,g,df1))
-    player_strategies = players(winner,loser,g,df1).strategy_history
+    fixture_list = list(fixtures(winner,loser,tournament_stage,df1,strategies_playing))
+    player_strategies = players(winner,loser,tournament_stage,df1,strategies_playing).strategy_history
     round_totals = pd.DataFrame()
     
-    for n in range(len(fixtures(winner,loser,g,df1))):
+    for n in range(len(fixtures(winner,loser,tournament_stage,df1,strategies_playing))):
         df = pd.DataFrame()
         move_hist = []
         points = []
@@ -180,8 +196,8 @@ def game(winner,loser,g,df1,rounds_no):
             player1_name = fixture_list[n][0]
             player2_name = fixture_list[n][1]
 
-            player1_move = strategies_menu()[player_strategies.loc[player1_name]](turn,1,move_hist)
-            player2_move = strategies_menu()[player_strategies.loc[player2_name]](turn,2,move_hist)
+            player1_move = strategies_selection(strategies_playing)[player_strategies.loc[player1_name]](turn,1,move_hist)
+            player2_move = strategies_selection(strategies_playing)[player_strategies.loc[player2_name]](turn,2,move_hist)
 
             player_scores = calculator(player1_move,player2_move,move_hist)
             move_hist = move_hist + [player1_move] + [player2_move]
@@ -193,29 +209,29 @@ def game(winner,loser,g,df1,rounds_no):
         round_totals = pd.concat([round_totals,df.iloc[:,-2:].sum(axis=0)],axis=1)
     return round_totals.sum(axis=1)
 
-def match(g,winner,loser,df1,rounds_no,matchups_no):
+def match(tournament_stage,winner,loser,df1,rounds_no,matchups_no,strategies_playing):
     matchups = matchups_no
     df = pd.DataFrame()
     for r in range(matchups-1):
-        df = pd.concat([df,game(winner,loser,g,df1,rounds_no)],axis=1)
-    totals = pd.Series(df.sum(axis=1),name='Generation'+'_'+str(g))
-    return pd.merge(players(winner,loser,g,df1),totals,how='outer',left_index=True,right_index=True)
+        df = pd.concat([df,game(winner,loser,tournament_stage,df1,rounds_no,strategies_playing)],axis=1)
+    totals = pd.Series(df.sum(axis=1),name='Generation'+'_'+str(tournament_stage))
+    return pd.merge(players(winner,loser,tournament_stage,df1,strategies_playing),totals,how='outer',left_index=True,right_index=True)
 
-def tournament(generations_no):
-    generations = generations_no
+def tournament(number_of_tournament_stages, tournament_type):
+    stages = number_of_tournament_stages
     df = pd.DataFrame()
     winner = 'player1'
     loser = 'player1'
     df1 = df.copy()
-    for g in range(generations):
-        if g == 0:
-            df = pd.concat([df,match(g,winner,loser,df1,rounds_no,matchups_no)],axis=1)
+    for tournament_stage in range(stages):
+        if tournament_stage == 0:
+            df = pd.concat([df,match(tournament_stage,winner,loser,df1,rounds_no,matchups_no, strategies_playing)],axis=1)
             scores = df.iloc[:,-1]
             winner = choices(list(scores.loc[scores == scores.max()].index))[0]
             loser = choices(list(scores.loc[scores == scores.min()].index))[0]
         else:
             df1 = df.iloc[:,-2].copy()
-            df = pd.concat([df,match(g,winner,loser,df1,rounds_no,matchups_no)],axis=1)
+            df = pd.concat([df,match(tournament_stage,winner,loser,df1,rounds_no,matchups_no, strategies_playing)],axis=1)
             scores = df.iloc[:,-1]
             winner = choices(list(scores.loc[scores == scores.max()].index))[0]
             loser = choices(list(scores.loc[scores == scores.min()].index))[0]
@@ -230,22 +246,23 @@ def tournament(generations_no):
 def home():
     return "wanna play?" + '<br><br><a href="/play">Start a tournament?</a> </br>'
 
-@app.route('/play', methods=['GET','POST'])  # to move into strategies microservice
+@app.route('/play', methods=['GET','POST'])
 def play():
     content = requests.get('http://frontend:5001/dataholding')
     data = content.json()
     rounds = int(data["rounds"])
     matchups = int(data["matches"])
+    strategies_playing = data["strategies"]
 
-    strategy_list = []
-    for s in strategies_menu():
-        strategy_list.append(s.__name__)
-    
+    # strategy_list = []
+    # for s in strategies_selection(strategies_playing):
+    #     strategy_list.append(s.__name__)
+   
     maps = {}
-    for m in range(len(strategy_list)):
-        maps.update({m:strategy_list[m]})
+    for m in range(len(strategies_playing)):
+        maps.update({m:strategies_playing[m]})
 
-    df6 = match(0,'player1','player1',pd.DataFrame(),rounds,matchups)
+    df6 = match(0,'player1','player1',pd.DataFrame(),rounds,matchups,strategies_playing)
     df6_clean = pd.concat([df6.strategy_history.map(maps),df6.Generation_0],axis=1).sort_values(by='Generation_0',ascending=False)
     return df6_clean.to_json()
 

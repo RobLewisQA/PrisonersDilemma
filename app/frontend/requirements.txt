@@ -1,3 +1,6 @@
 pandas
 Flask
 requests
+pytest
+pytest-cov
+Flask-Testing

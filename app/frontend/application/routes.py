@@ -38,7 +38,11 @@ def freegame_2():
 
         rounds_no = request.form['rounds']
         matches_no = request.form['matches']
-        noise = request.form['noise']
+        
+        try:
+            noise = int(request.form['noise'])
+        except:
+            noise = 0
 
         selected_strategies = []
         for n in range(1,11):
@@ -56,8 +60,8 @@ def freegame_2():
         return render_template("freegame_2.html", cc_points = cc_points, dd_points = dd_points, cd_points = cd_points, dc_points = dc_points,
         rounds_no = rounds_no, matches_no = matches_no, noise = noise, playing_strategies = playing_strategies)    
 
-    if response.method == 'GET':
-        return 'Hmm, this is not a gettable page. Try again'##render_template("freegame_2.html")
+    else:
+        return 'Hmm, this is not a gettable page. Try again'
     
 @app.route('/dataholding', methods=['GET','POST']) 
 def dataholding():
@@ -65,7 +69,8 @@ def dataholding():
         strategies_request_string = request.form['playing_strategies']
         strategies_list = strategies_request_string.replace("[","").replace("]","").replace(" ","").replace("'","").split('-')
         data = {"cc_points":request.form['cc_points'], "dd_points":request.form['dd_points'],"cd_points":request.form['cd_points'],
-        "dc_points":request.form['dc_points'], "rounds":request.form['rounds_no'],"matches":request.form['matches_no'],"strategies":strategies_list}
+        "dc_points":request.form['dc_points'], "rounds":request.form['rounds_no'],"matches":request.form['matches_no'],"strategies":strategies_list,
+        "chance_of_misfire": request.form['noise'] }
         json_data = json.dumps(data)
         f = open("game_rules.json", "w")
         f.write(json_data)

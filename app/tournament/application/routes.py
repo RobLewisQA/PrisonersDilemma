@@ -7,17 +7,17 @@ import random
 import requests
 
 def calculator(player1_move,player2_move,move_hist):
-    if player1_move == "c":
-        if player2_move == "c":
-            return [2,2]
-        else:
-            return [0,3]
-    elif player1_move == "d":
-        if player2_move == "d":
-            return [1,1]
-        else:
-            return [3,0]
-    
+        if player1_move == "c":
+            if player2_move == "c":
+                return [2,2]
+            else:
+                return [0,3]
+        elif player1_move == "d":
+            if player2_move == "d":
+                return [1,1]
+            else:
+                return [3,0]
+
 
 def C_AlwaysC(turn,player,move_hist):
     if  turn == 0:
@@ -145,8 +145,11 @@ def strategies_menu():
     menu = (C_AlwaysD,C_AlwaysC,D_AlwaysD,C_TitForTat,C_UntilD,Random_70C,Random_70D,C_TitFor2Tat,D_TitFor2TatExploiter,C_OccasionalDefector,D_AlwaysCExploiter,D_AlwaysC)
     return C_AlwaysD,C_AlwaysC,D_AlwaysD,C_TitForTat,C_UntilD,Random_70C,Random_70D,C_TitFor2Tat,D_TitFor2TatExploiter,C_OccasionalDefector,D_AlwaysCExploiter,D_AlwaysC
 
-############ strategies selector based on route post
+
 def strategies_selection(selected_strategies_list):
+    # generates the set of strategies to be played as a tuple of functions
+    # the argument is a variable defined at the 'play' route as a list posted from html form
+    
     all_strategies_set = (C_AlwaysD,C_AlwaysC,D_AlwaysD,C_TitForTat,C_UntilD,Random_70C,Random_70D,C_TitFor2Tat,D_TitFor2TatExploiter,C_OccasionalDefector,D_AlwaysCExploiter,D_AlwaysC)
     all_strategies_list = []
     for a in all_strategies_set:
@@ -157,17 +160,17 @@ def strategies_selection(selected_strategies_list):
         strategies_playing = strategies_playing + [all_strategies_list.index(strategy)]
     return tuple([all_strategies_set[index] for index in strategies_playing])
 
-############
 
 def players(winner,loser,tournament_stage,df1,strategies_playing):
+    # defines the names/numbers of players so that they are able to change strategies for new tournaments
+
     if tournament_stage == 0:
-        #playing = 12
         playing = len(strategies_playing)
         player_list = []
         start_strategy = []
-        for p in range(1,playing+1):
+        for p in range(playing):
             player_list = player_list + ['player'+str(p)]
-            start_strategy = start_strategy + [p-1]
+            start_strategy = start_strategy + [p]
 
         df = pd.DataFrame(index=player_list,columns=['strategy_history'],data=start_strategy)
         df.loc[loser] = [df.loc[winner]]
@@ -181,7 +184,22 @@ def fixtures(winner,loser,tournament_stage,df1,strategies_playing):
     fixture_list = list(combinations(players(winner,loser,tournament_stage,df1,strategies_playing).index,2))
     return fixture_list
     
-def game(winner,loser,tournament_stage,df1,rounds_no,strategies_playing):
+def misfire(move,chance_of_misfire):
+    if int(chance_of_misfire) > 0:
+        if move == "c":
+            if random.randint(1,99) > chance_of_misfire:
+                return "c"
+            else:
+                return "d"
+        elif move == 'd':
+            if random.randint(1,99) > chance_of_misfire:
+                return 'd'
+            else:
+                return 'c'
+    else:
+        return move
+
+def game(winner,loser,tournament_stage,df1,rounds_no,strategies_playing,chance_of_misfire):
     gamelength = rounds_no
     fixture_list = list(fixtures(winner,loser,tournament_stage,df1,strategies_playing))
     player_strategies = players(winner,loser,tournament_stage,df1,strategies_playing).strategy_history
@@ -196,24 +214,25 @@ def game(winner,loser,tournament_stage,df1,rounds_no,strategies_playing):
             player1_name = fixture_list[n][0]
             player2_name = fixture_list[n][1]
 
-            player1_move = strategies_selection(strategies_playing)[player_strategies.loc[player1_name]](turn,1,move_hist)
-            player2_move = strategies_selection(strategies_playing)[player_strategies.loc[player2_name]](turn,2,move_hist)
-
+################ insert misfire function ###################
+            player1_move = misfire(strategies_selection(strategies_playing)[player_strategies.loc[player1_name]](turn,1,move_hist),chance_of_misfire)
+            player2_move = misfire(strategies_selection(strategies_playing)[player_strategies.loc[player2_name]](turn,2,move_hist),chance_of_misfire)
             player_scores = calculator(player1_move,player2_move,move_hist)
+
             move_hist = move_hist + [player1_move] + [player2_move]
             points = points + [player_scores[0]] + [player_scores[1]]
 
         df = pd.DataFrame([move_hist[0::2],move_hist[1::2],points[0::2],points[1::2]]).T
         df.rename(columns={0:player1_name+"_move",1:player2_name+"_move",2:player1_name,3:player2_name},inplace=True)
-        #print(df)
+
         round_totals = pd.concat([round_totals,df.iloc[:,-2:].sum(axis=0)],axis=1)
     return round_totals.sum(axis=1)
 
-def match(tournament_stage,winner,loser,df1,rounds_no,matchups_no,strategies_playing):
+def match(tournament_stage,winner,loser,df1,rounds_no,matchups_no,strategies_playing,chance_of_misfire):
     matchups = matchups_no
     df = pd.DataFrame()
-    for r in range(matchups-1):
-        df = pd.concat([df,game(winner,loser,tournament_stage,df1,rounds_no,strategies_playing)],axis=1)
+    for r in range(1,matchups+1):
+        df = pd.concat([df,game(winner,loser,tournament_stage,df1,rounds_no,strategies_playing,chance_of_misfire)],axis=1)
     totals = pd.Series(df.sum(axis=1),name='Generation'+'_'+str(tournament_stage))
     return pd.merge(players(winner,loser,tournament_stage,df1,strategies_playing),totals,how='outer',left_index=True,right_index=True)
 
@@ -223,15 +242,17 @@ def tournament(number_of_tournament_stages, tournament_type):
     winner = 'player1'
     loser = 'player1'
     df1 = df.copy()
+
+    #if tournament_type == 'RoundRobin_with_EliminationAndDuplication'
     for tournament_stage in range(stages):
         if tournament_stage == 0:
-            df = pd.concat([df,match(tournament_stage,winner,loser,df1,rounds_no,matchups_no, strategies_playing)],axis=1)
+            df = pd.concat([df,match(tournament_stage,winner,loser,df1,rounds_no,matchups_no, strategies_playing, chance_of_misfire)],axis=1)
             scores = df.iloc[:,-1]
             winner = choices(list(scores.loc[scores == scores.max()].index))[0]
             loser = choices(list(scores.loc[scores == scores.min()].index))[0]
         else:
             df1 = df.iloc[:,-2].copy()
-            df = pd.concat([df,match(tournament_stage,winner,loser,df1,rounds_no,matchups_no, strategies_playing)],axis=1)
+            df = pd.concat([df,match(tournament_stage,winner,loser,df1,rounds_no,matchups_no, strategies_playing ,chance_of_misfire)],axis=1)
             scores = df.iloc[:,-1]
             winner = choices(list(scores.loc[scores == scores.max()].index))[0]
             loser = choices(list(scores.loc[scores == scores.min()].index))[0]
@@ -253,6 +274,7 @@ def play():
     rounds = int(data["rounds"])
     matchups = int(data["matches"])
     strategies_playing = data["strategies"]
+    chance_of_misfire = int(data["chance_of_misfire"])
 
     # strategy_list = []
     # for s in strategies_selection(strategies_playing):
@@ -262,7 +284,7 @@ def play():
     for m in range(len(strategies_playing)):
         maps.update({m:strategies_playing[m]})
 
-    df6 = match(0,'player1','player1',pd.DataFrame(),rounds,matchups,strategies_playing)
+    df6 = match(0,'player1','player1',pd.DataFrame(),rounds,matchups,strategies_playing,chance_of_misfire)
     df6_clean = pd.concat([df6.strategy_history.map(maps),df6.Generation_0],axis=1).sort_values(by='Generation_0',ascending=False)
     return df6_clean.to_json()
 

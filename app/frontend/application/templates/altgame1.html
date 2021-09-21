@@ -1,0 +1,52 @@
+<html>
+    <h1>
+        Customise Your Game!
+    </h1>
+    <br><br>
+    <h3>
+        Types of tournament available:
+    </h3>
+    <br>
+    <style>
+        table, th, td {
+          border: 1px solid black;
+          border-collapse: collapse;
+        }
+    </style>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>Round-Robin League</td>
+            <td>Each player plays every other player in a league format</td>
+        </tr>
+        <tr>
+            <td>Round-Robin League with Multiplication</td>
+            <td>Multi-stage Round-Robin League where the top-scoring player(s) of each stage are duplicated</td>
+          </tr>
+        <tr>
+            <td>Round-Robin League with Elimination</td>
+            <td>Multi-stage Round-Robin League where the bottom-scoring player(s) of each stage are eliminated</td>
+        </tr>
+        <tr>
+            <td>Round-Robin League with Multiplication and Elimination</td>
+            <td>Multi-stage Round-Robin League where the bottom-scoring player(s) of each stage are replaced by duplicates of the top-scoring player(s)</td>
+        </tr>
+    </table>
+    <h3>
+        Select a type of tounament from the list below:
+    </h3>
+
+    <form action="/altgame2" method = "post">
+        <label for="tournamenttypes"></label>
+        <select name="tournamenttypes" id="tournamenttypes">
+            <option value="rr">Round-Robin League</option>
+            <option value="rr_dupl">Round-Robin League with Multiplication</option>
+            <option value="rr_elim">Round-Robin League with Elimination</option>
+            <option value="rr_dupl&elim">Round-Robin League with Multiplication and Elimination</option>
+        </select>
+        <input type="submit" value="Submit">
+    </form>
+</html>

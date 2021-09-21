@@ -1,0 +1,70 @@
+<html>
+    <h1>
+        Customise Your Game!
+    </h1>
+    <br><br>
+    <h3>
+        Defining your {{ text }} tournament paramenters:
+    </h3>
+    <br>
+    <style>
+        table, th, td {
+          border: 1px solid black;
+          border-collapse: collapse;
+        }
+    </style>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>Rounds</td>
+            <td>Number of iterations in an iterated Prisoners Dilemma game between two players</td>
+        </tr>
+        <tr>
+            <td>Stages</td>
+            <td>Number of complete Round-Robin Leagues in a tournament (or number of times the same two players can meet over the tournament)</td>
+          </tr>
+        <tr>
+            <td>Points</td>
+            <td>Points given to players for each game-round outcome</td>
+        </tr>
+        <tr>
+            <td>Misfire</td>
+            <td>The % chance that a player will mistakenly defect if it chooses to cooperate and vice-versa</td>
+        </tr>
+    </table>
+    <h4>
+        Choose your tournament parameters below:
+    </h4>
+
+    <!-- <label for="tournamenttypes"></label>
+    <select name="tournamenttypes" id="tournamenttypes">
+        <option value={{ val }}>{{ text }}</option>
+    </select> -->
+    
+    <form action="/altgame3" method = "post">
+        
+        <label for="rounds">How many rounds will there be in each matchup?</label><br>
+        <input type="text" id="rounds" name="rounds"> <br><br><br>
+        
+        <label for="stages">How many matches will each matchup play in the tournament?</label><br>
+        <input type="text" id="stages" name="stages"> <br><br><br>
+
+        <label for="cc_points">If both players cooperate, both will score:</label>
+        <input type="text" id="cc_points" name="cc_points"> <br><br>
+        <label for="dd_points">If both players defect, both will score:</label>
+        <input type="text" id="dd_points" name="dd_points"><br><br>
+        <label for="dc_points">If one player defects while the other cooperates, the defector will score:</label>
+        <input type="text" id="dc_points" name="dc_points">
+        <label for="cd_points"> and the cooperator will score:</label>
+        <input type="text" id="cd_points" name="cd_points"><br><br>
+        
+        <p>
+            <label for="noise">How often will players misfire (integer % value)</label><br>
+            <input type="text" id="noise" name="noise" placeholder="default is 0">
+            %
+        </p>
+    <input type="submit" value="Submit">
+</html>

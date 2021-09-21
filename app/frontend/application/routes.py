@@ -90,7 +90,45 @@ def freegame_3():
         return pd.DataFrame.from_dict(content,orient='index').to_html()    
 
 
+@app.route('/altgame1', methods=['GET','POST']) 
+def altgame1():
+    return render_template("altgame1.html")
 
+@app.route('/altgame2', methods=['GET','POST']) 
+def altgame2():
+    if request.method == 'POST':
+        tournament_type = request.form['tournamenttypes']
+        if tournament_type == "rr":
+            val = "rr"
+            text = "Round-Robin League"
+        elif tournament_type == "rr_dupl":
+            val = "rr_dupl"
+            text = "Round-Robin League with Multiplication"
+        elif tournament_type == "rr_elim":
+            val = "rr_elim"
+            text = "Round-Robin League with Elimination"
+        elif tournament_type == "rr_dupl&elim":
+            val = "rr_dupl&elim"
+            text = "Round-Robin League with Multiplication and Elimination"
+        return render_template("altgame2.html",val = val, text = text)
+
+@app.route('/altgame3', methods=['GET','POST']) 
+def altgame3():
+    if request.method == 'POST':
+        cc_points = request.form['cc_points']
+        dd_points = request.form['dd_points']
+        dc_points = request.form['dc_points']
+        cd_points = request.form['cd_points']
+
+        rounds_no = request.form['rounds']
+        stages_no = request.form['stages']
+        
+        try:
+            noise = int(request.form['noise'])
+        except:
+            noise = 0
+        return render_template("altgame3.html",cc_points = cc_points,dd_points = dd_points,dc_points = dc_points,cd_points = cd_points,
+        rounds_no = rounds_no,stages_no = stages_no,noise = noise)
 
 # def singlegame_fe():
 #     return 'singlegame_fe'
